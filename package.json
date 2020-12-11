@@ -1,0 +1,65 @@
+{
+	"name": "extraSqlScriptAs",
+	"displayName": "extraSqlScriptAs",
+	"description": "scripts...",
+	"publisher": "pacoweb",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.39.0",
+		"azdata": "*"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:extraSqlScriptAs.insertTable",
+		"onCommand:extraSqlScriptAs.updateTable"
+	],
+	"main": "./extension.js",
+
+	"contributes": {
+		"commands": [
+			{
+				"command": "extraSqlScriptAs.insertTable",
+				"title": "Script Insert Table"
+			},
+			{
+				"command": "extraSqlScriptAs.updateTable",
+				"title": "Script Update Table"
+			}
+		],
+		"menus": {
+            "objectExplorer/item/context": [
+                {
+                    "command": "extraSqlScriptAs.insertTable",
+                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+                    "group": "1data1"
+				},
+				{
+                    "command": "extraSqlScriptAs.updateTable",
+                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+                    "group": "1data1"
+				}
+            ]
+        }
+	},
+
+	"scripts": {
+		"lint": "eslint .",
+		"pretest": "npm run lint",
+		"test": "node ./test/runTest.js",
+		"proposedapi": "node installTypings.js"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.39.0",
+		"@types/azdata": "*",
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.2",
+		"@types/node": "^13.11.0",
+		"eslint": "^6.8.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.1.2",
+		"typescript": "^3.8.3",
+		"vscode-test": "^1.3.0"
+	}
+}
