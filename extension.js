@@ -83,7 +83,8 @@ function activate(context)
             let databaseName = context.connectionProfile.databaseName;
             let schemaName = context.nodeInfo.metadata.schema;
             let tableName = context.nodeInfo.metadata.name;
-
+            
+            //Test
             getSqlScriptAsUpdateAsync(context.connectionProfile, databaseName, schemaName, tableName)
                 .then(scriptText => 
                 {
