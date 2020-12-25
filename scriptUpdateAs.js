@@ -13,7 +13,7 @@ const colIsIdentityOrdinal = 6;
 const colComputedOrdinal = 7;
 const colDatetimePrecisionOrdinal = 8;
 
-async function getSqlScriptAsInsertAsync(connectionProfile, tableCatalog, tableSchema, tableName) 
+async function getSqlScriptAsUpdateAsync(connectionProfile, tableCatalog, tableSchema, tableName) 
 {
     let queryText = sqlUtils.getColumnInfoQuerySql(tableCatalog, tableSchema, tableName);
 
@@ -23,21 +23,18 @@ async function getSqlScriptAsInsertAsync(connectionProfile, tableCatalog, tableS
         throw "No se han obtenido resultados de la consulta";
     }
 
-    let insertSqlScript = buildFinalScript(results, tableCatalog, tableSchema, tableName);
+    let updateSqlScript = buildFinalScript(results, tableCatalog, tableSchema, tableName);
 
-    return insertSqlScript;
+    return updateSqlScript;
 }
 
 function buildFinalScript(results, tableCatalog, tableSchema, tableName)
 {
     let fullScript = [];
     let columsScriptPart = [];
-    let valuesScriptPart = [];
 
-    fullScript.push(`INSERT INTO [${tableCatalog}].[${tableSchema}].[${tableName}]`);
-
-    columsScriptPart.push("(");
-    valuesScriptPart.push("(");
+    fullScript.push(`UPDATE [${tableCatalog}].[${tableSchema}].[${tableName}] `);
+    fullScript.push("SET");
 
     for (let i= 0; i !== results.rowCount; i++) 
     {
@@ -54,22 +51,19 @@ function buildFinalScript(results, tableCatalog, tableSchema, tableName)
             separator = "";
         }
         
-        columsScriptPart.push("\t\t" + separator + "[" + rowData[colNameOrdinal].displayValue + "]");
-
-        valuesScriptPart.push("\t\t" + separator + sqlUtils.getColTypeString(
-            rowData[colDataTypeOrdinal].displayValue,
-            rowData[colCharsMaxLenOrdinal].displayValue,
-            rowData[colNumericPrecisionOrdinal].displayValue,
-            rowData[colNumerocScaleOrdinal].displayValue,
-            rowData[colIsNullableOrdinal].displayValue,
-            rowData[colDatetimePrecisionOrdinal].displayValue
-        ));
+        columsScriptPart.push("\t\t" + separator + "[" + rowData[colNameOrdinal].displayValue + "]"
+                    + "="
+                    + sqlUtils.getColTypeString(
+                        rowData[colDataTypeOrdinal].displayValue,
+                        rowData[colCharsMaxLenOrdinal].displayValue,
+                        rowData[colNumericPrecisionOrdinal].displayValue,
+                        rowData[colNumerocScaleOrdinal].displayValue,
+                        rowData[colIsNullableOrdinal].displayValue,
+                        rowData[colDatetimePrecisionOrdinal].displayValue
+                    ));
     }
 
-    columsScriptPart.push(")");
-    valuesScriptPart.push(")");
-
-    return fullScript.concat(columsScriptPart).concat(["VALUES"]).concat(valuesScriptPart).join('\n');
+    return fullScript.concat(columsScriptPart).concat(["WHERE <Search Conditions,,>"]).join('\n');
 }
 
-module.exports.getSqlScriptAsInsertAsync = getSqlScriptAsInsertAsync;
+module.exports.getSqlScriptAsUpdateAsync = getSqlScriptAsUpdateAsync;
