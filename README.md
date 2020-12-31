@@ -1,13 +1,32 @@
-# README
-## This is the README for your extension "extraSqlScriptAs"
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+# Azure Data Studio -   3 "Extra Sql Script As" Extension
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
+This extension adds several missing options to the context menu of the object tree:
 
-### For more information
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+* Script Table as INSERT
+* Script Table as INSERT to clipboard
+* Script Table as UPDATE
+* Script Table as UPDATE to clipboard
+* Script Table as DELETE
+* Script Table as DELETE to clipboard
 
-**Enjoy!**
+## Features
+
+#### Script Table as INSERT
+![Import a Script](https://raw.githubusercontent.com/pacoweb/extraSqlScriptAs/master/images/insert_capture.gif)
+#### Script Table as UPDATE
+![Import a Script](https://raw.githubusercontent.com/pacoweb/extraSqlScriptAs/master/images/update_capture.gif)
+#### Script Table as DELETE
+![Import a Script](https://raw.githubusercontent.com/pacoweb/extraSqlScriptAs/master/images/delete_capture.gif)
+
+## Known Issues
+
+No open issues at this time.
+
+## Unknown Issues
+Can be raised here: https://github.com/pacoweb/extraSqlScriptAs/issues
+
+## Release Notes
+
+### 0.1.0
+
+- Initial release.
