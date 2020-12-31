@@ -1,9 +1,9 @@
 {
 	"name": "extraSqlScriptAs",
-	"displayName": "extraSqlScriptAs",
-	"description": "scripts...",
+	"displayName": "Extra Sql Script As",
+	"description": "This extension adds several missing options to the context menu of the object tree: Script Table as INSERT, Script Table as UPDATE...",
 	"publisher": "pacoweb",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.39.0",
 		"azdata": "*"
