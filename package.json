@@ -1,9 +1,9 @@
 {
-	"name": "extraSqlScriptAs",
+	"name": "extra-sql-script-as",
 	"displayName": "Extra Sql Script As",
 	"description": "This extension adds several missing options to the context menu of the object tree: Script Table as INSERT, Script Table as UPDATE...",
 	"publisher": "pacoweb",
-	"version": "0.1.0",
+	"version": "0.2.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/pacoweb/extraSqlScriptAs.git"
