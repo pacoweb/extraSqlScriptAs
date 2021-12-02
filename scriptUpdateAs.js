@@ -36,9 +36,10 @@ function buildFinalScript(results, tableCatalog, tableSchema, tableName)
     fullScript.push(`UPDATE [${tableCatalog}].[${tableSchema}].[${tableName}] `);
     fullScript.push("SET");
 
+    let columnIndex = 0;
+
     for (let i= 0; i !== results.rowCount; i++) 
     {
-        let separator = ",";
         let rowData = results.rows[i];
 
         let isComputed = rowData[colComputedOrdinal].displayValue;
@@ -47,9 +48,7 @@ function buildFinalScript(results, tableCatalog, tableSchema, tableName)
         if(isComputed === "1" || IsIdentity === "1")
             continue;
 
-        if(i === 0){
-            separator = "";
-        }
+        const separator = (columnIndex === 0) ? " " : ",";
         
         columsScriptPart.push("\t\t" + separator + "[" + rowData[colNameOrdinal].displayValue + "]"
                     + "="
@@ -61,6 +60,8 @@ function buildFinalScript(results, tableCatalog, tableSchema, tableName)
                         rowData[colIsNullableOrdinal].displayValue,
                         rowData[colDatetimePrecisionOrdinal].displayValue
                     ));
+
+        columnIndex += 1;
     }
 
     return fullScript.concat(columsScriptPart).concat(["WHERE <Search Conditions,,>"]).join('\n');
