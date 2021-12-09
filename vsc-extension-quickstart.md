@@ -12,6 +12,7 @@ We pass the function containing the implementation of the command as the second 
 `registerCommand`.
 
 ## Get up and running straight away
+* Install the debugger, search extensions for 'ms-mssql.sqlops-debug'
 * Press `F5` to open a new window with your extension loaded.
 * Run your command from the command palette by pressing (`Ctrl+Shift+P` or `Cmd+Shift+P` on Mac) and typing `Hello World`.
 * Set breakpoints in your code inside `extension.js` to debug your extension.
