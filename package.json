@@ -3,13 +3,13 @@
 	"displayName": "Extra Sql Script As",
 	"description": "This extension adds several missing options to the context menu of the object tree: Script Table as INSERT, Script Table as UPDATE...",
 	"publisher": "pacoweb",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"license": "https://raw.githubusercontent.com/pacoweb/extraSqlScriptAs/master/LICENSE",
 	"icon": "images/default_icon.png",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/pacoweb/extraSqlScriptAs.git"
-    },
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/pacoweb/extraSqlScriptAs.git"
+	},
 	"engines": {
 		"vscode": "^1.39.0",
 		"azdata": "*"
@@ -26,7 +26,6 @@
 		"onCommand:extraSqlScriptAs.deleteTableToClipboard"
 	],
 	"main": "./extension.js",
-
 	"contributes": {
 		"commands": [
 			{
@@ -55,41 +54,40 @@
 			}
 		],
 		"menus": {
-            "objectExplorer/item/context": [
-                {
-                    "command": "extraSqlScriptAs.insertTable",
-                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
-                    "group": "1data1"
+			"objectExplorer/item/context": [
+				{
+					"command": "extraSqlScriptAs.insertTable",
+					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+					"group": "1data1"
 				},
 				{
-                    "command": "extraSqlScriptAs.updateTable",
-                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
-                    "group": "1data1"
+					"command": "extraSqlScriptAs.updateTable",
+					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+					"group": "1data1"
 				},
 				{
-                    "command": "extraSqlScriptAs.deleteTable",
-                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
-                    "group": "1data1"
+					"command": "extraSqlScriptAs.deleteTable",
+					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+					"group": "1data1"
 				},
 				{
-                    "command": "extraSqlScriptAs.insertTableToClipboard",
-                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
-                    "group": "1data1"
+					"command": "extraSqlScriptAs.insertTableToClipboard",
+					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+					"group": "1data1"
 				},
 				{
-                    "command": "extraSqlScriptAs.updateTableToClipboard",
-                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
-                    "group": "1data1"
+					"command": "extraSqlScriptAs.updateTableToClipboard",
+					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+					"group": "1data1"
 				},
 				{
-                    "command": "extraSqlScriptAs.deleteTableToClipboard",
-                    "when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
-                    "group": "1data1"
+					"command": "extraSqlScriptAs.deleteTableToClipboard",
+					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+					"group": "1data1"
 				}
-            ]
-        }
+			]
+		}
 	},
-
 	"scripts": {
 		"lint": "eslint .",
 		"pretest": "npm run lint",
@@ -97,15 +95,15 @@
 		"proposedapi": "node installTypings.js"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.39.0",
+		"@types/vscode": "^1.63.0",
 		"@types/azdata": "*",
-		"@types/glob": "^7.1.1",
-		"@types/mocha": "^7.0.2",
-		"@types/node": "^13.11.0",
-		"eslint": "^6.8.0",
-		"glob": "^7.1.6",
-		"mocha": "^7.1.2",
-		"typescript": "^3.8.3",
-		"vscode-test": "^1.3.0"
+		"@types/glob": "^7.2.0",
+		"@types/mocha": "^9.0.0",
+		"@types/node": "^16.11.12",
+		"eslint": "^8.4.1",
+		"glob": "^7.2.0",
+		"mocha": "^9.1.3",
+		"typescript": "^4.5.2",
+		"vscode-test": "^1.6.1"
 	}
 }

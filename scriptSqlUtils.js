@@ -16,11 +16,26 @@ function getColumnInfoQuerySql(tableCatalog, tableSchema, tableName)
         COL.NUMERIC_PRECISION,
         COL.NUMERIC_SCALE,
         COL.IS_NULLABLE,
-        COLUMNPROPERTY(OBJECT_ID(T.TABLE_SCHEMA + '.' +T.TABLE_NAME), COL.COLUMN_NAME, 'IsIdentity') IS_IDENTITY,
-        COLUMNPROPERTY(OBJECT_ID(T.TABLE_SCHEMA + '.' +T.TABLE_NAME), COL.COLUMN_NAME, 'IsComputed') IS_COMPUTED,
+		SYS_COLS.SUB_ISIDENTITY IS_IDENTITY,
+		SYS_COLS.SUB_ISCOMPUTED IS_COMPUTED,
         COL.DATETIME_PRECISION
         FROM [${tableCatalog}].INFORMATION_SCHEMA.TABLES T
         INNER JOIN [${tableCatalog}].INFORMATION_SCHEMA.COLUMNS COL ON COL.TABLE_NAME = T.TABLE_NAME AND COL.TABLE_SCHEMA = T.TABLE_SCHEMA
+		INNER JOIN 
+		(
+		  SELECT 
+			cc.name as SUB_COLNAME
+			,cc.is_identity as SUB_ISIDENTITY
+			,cc.is_computed as SUB_ISCOMPUTED
+		  FROM
+          [${tableCatalog}].SYS.columns CC
+		  inner join  [${tableCatalog}].SYS.tables TT 
+		  on CC.object_id = TT.object_id
+		  inner join [${tableCatalog}].SYS.schemas SS 
+		  on TT.schema_id = SS.schema_id
+		  WHERE SS.name = '${tableSchema}' and TT.name = '${tableName}'
+		) SYS_COLS ON
+			COL.COLUMN_NAME = SYS_COLS.SUB_COLNAME 
         WHERE 
         T.TABLE_TYPE = 'BASE TABLE'
         AND T.TABLE_SCHEMA = '${tableSchema}' 
