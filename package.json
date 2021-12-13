@@ -3,7 +3,7 @@
 	"displayName": "Extra Sql Script As",
 	"description": "This extension adds several missing options to the context menu of the object tree: Script Table as INSERT, Script Table as UPDATE...",
 	"publisher": "pacoweb",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"license": "https://raw.githubusercontent.com/pacoweb/extraSqlScriptAs/master/LICENSE",
 	"icon": "images/default_icon.png",
 	"repository": {
@@ -11,7 +11,7 @@
 		"url": "https://github.com/pacoweb/extraSqlScriptAs.git"
 	},
 	"engines": {
-		"vscode": "^1.63.0",
+		"vscode": "^1.58.0",
 		"azdata": "*"
 	},
 	"categories": [
@@ -95,7 +95,7 @@
 		"proposedapi": "node installTypings.js"
 	},
 	"devDependencies": {
-		"@types/vscode": "^1.63.0",
+		"@types/vscode": "^1.58.0",
 		"@types/azdata": "*",
 		"@types/glob": "^7.2.0",
 		"@types/mocha": "^9.0.0",
