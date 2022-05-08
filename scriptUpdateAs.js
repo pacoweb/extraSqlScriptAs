@@ -1,6 +1,5 @@
 'use strict';
 
-const vscode = require('vscode');
 const sqlUtils = require('./scriptSqlUtils.js');
 
 const colNameOrdinal = 0;
