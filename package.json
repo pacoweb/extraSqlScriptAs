@@ -3,7 +3,7 @@
 	"displayName": "Extra Sql Script As",
 	"description": "This extension adds several missing options to the context menu of the object tree: Script Table as INSERT, Script Table as UPDATE...",
 	"publisher": "pacoweb",
-	"version": "0.4.1",
+	"version": "0.5.0",
 	"license": "https://raw.githubusercontent.com/pacoweb/extraSqlScriptAs/master/LICENSE",
 	"icon": "images/default_icon.png",
 	"repository": {
@@ -21,9 +21,11 @@
 		"onCommand:extraSqlScriptAs.insertTable",
 		"onCommand:extraSqlScriptAs.updateTable",
 		"onCommand:extraSqlScriptAs.deleteTable",
+		"onCommand:extraSqlScriptAs.selectTable",
 		"onCommand:extraSqlScriptAs.insertTableToClipboard",
 		"onCommand:extraSqlScriptAs.updateTableToClipboard",
-		"onCommand:extraSqlScriptAs.deleteTableToClipboard"
+		"onCommand:extraSqlScriptAs.deleteTableToClipboard",
+		"onCommand:extraSqlScriptAs.selectTableToClipboard"
 	],
 	"main": "./extension.js",
 	"contributes": {
@@ -41,6 +43,10 @@
 				"title": "Script Table as DELETE"
 			},
 			{
+				"command": "extraSqlScriptAs.selectTable",
+				"title": "Script Table as SELECT"
+			},
+			{
 				"command": "extraSqlScriptAs.insertTableToClipboard",
 				"title": "Script Table as INSERT to clipboard"
 			},
@@ -51,6 +57,10 @@
 			{
 				"command": "extraSqlScriptAs.deleteTableToClipboard",
 				"title": "Script Table as DELETE to clipboard"
+			},
+			{
+				"command": "extraSqlScriptAs.selectTableToClipboard",
+				"title": "Script Table as SELECT to clipboard"
 			}
 		],
 		"menus": {
@@ -71,6 +81,11 @@
 					"group": "1data1"
 				},
 				{
+					"command": "extraSqlScriptAs.selectTable",
+					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+					"group": "1data1"
+				},
+				{
 					"command": "extraSqlScriptAs.insertTableToClipboard",
 					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
 					"group": "1data1"
@@ -82,6 +97,11 @@
 				},
 				{
 					"command": "extraSqlScriptAs.deleteTableToClipboard",
+					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+					"group": "1data1"
+				},
+				{
+					"command": "extraSqlScriptAs.selectTableToClipboard",
 					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
 					"group": "1data1"
 				}
