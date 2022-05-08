@@ -20,7 +20,7 @@ This extension adds several missing options to the context menu of the object tr
 #### Script Table as DELETE
 ![Import a Script](https://raw.githubusercontent.com/pacoweb/extraSqlScriptAs/master/images/delete_capture.gif)
 #### Script Table as SELECT
-![Import a Script](https://raw.githubusercontent.com/pacoweb/extraSqlScriptAs/master/images/delete_capture.gif)
+![Import a Script](https://raw.githubusercontent.com/pacoweb/extraSqlScriptAs/master/images/select_capture.gif)
 
 ## Known Issues
 
