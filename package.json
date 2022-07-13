@@ -126,4 +126,24 @@
 		"typescript": "^4.5.2",
 		"vscode-test": "^1.6.1"
 	}
+    "onCommand:extraSqlScriptAs.dropandCreateStoredProcedure",
+    "onCommand:extraSqlScriptAs.dropandCreateStoredProcedureToClipboard",
+      {
+        "command": "extraSqlScriptAs.dropandCreateStoredProcedure",
+        "title": "Script Stored procedure as DROP AND CREATE"
+      },
+      {
+        "command": "extraSqlScriptAs.dropandCreateStoredProcedureToClipboard",
+        "title": "Script Stored procedure as DROP AND CREATE to clipboard"
+      },
+        {
+          "command": "extraSqlScriptAs.dropandCreateStoredProcedure",
+          "when": "connectionProvider == MSSQL && nodeType == StoredProcedure",
+          "group": "1data1"
+        },
+        {
+          "command": "extraSqlScriptAs.dropandCreateStoredProcedureToClipboard",
+          "when": "connectionProvider == MSSQL && nodeType == StoredProcedure",
+          "group": "1data1"
+        },
 }
