@@ -127,18 +127,33 @@
 		"vscode-test": "^1.6.1"
 	}
     "onCommand:extraSqlScriptAs.dropandCreateStoredProcedure",
+    "onCommand:extraSqlScriptAs.dropandCreateFunction",
     "onCommand:extraSqlScriptAs.dropandCreateStoredProcedureToClipboard",
+    "onCommand:extraSqlScriptAs.dropandCreateFunctionToClipboard"
       {
         "command": "extraSqlScriptAs.dropandCreateStoredProcedure",
         "title": "Script Stored procedure as DROP AND CREATE"
       },
       {
+        "command": "extraSqlScriptAs.dropandCreateFunction",
+        "title": "Script Functions as DROP AND CREATE"
+      },
+      {
         "command": "extraSqlScriptAs.dropandCreateStoredProcedureToClipboard",
         "title": "Script Stored procedure as DROP AND CREATE to clipboard"
       },
+      {
+        "command": "extraSqlScriptAs.dropandCreateFunctionToClipboard",
+        "title": "Script Functions as DROP AND CREATE to clipboard"
+      }
         {
           "command": "extraSqlScriptAs.dropandCreateStoredProcedure",
           "when": "connectionProvider == MSSQL && nodeType == StoredProcedure",
+          "group": "1data1"
+        },
+        {
+          "command": "extraSqlScriptAs.dropandCreateFunction",
+          "when": "connectionProvider == MSSQL && nodeType == ScalarValuedFunction",
           "group": "1data1"
         },
         {
@@ -146,4 +161,9 @@
           "when": "connectionProvider == MSSQL && nodeType == StoredProcedure",
           "group": "1data1"
         },
+        {
+          "command": "extraSqlScriptAs.dropandCreateFunctionToClipboard",
+          "when": "connectionProvider == MSSQL && nodeType == ScalarValuedFunction",
+          "group": "1data1"
+        }
 }

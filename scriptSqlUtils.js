@@ -1,6 +1,17 @@
 
 const azdata = require('azdata');
 
+function getRoutineInfoQuerySql(tableCatalog, tableSchema, routineName) {
+  return `SELECT 
+        R.ROUTINE_DEFINITION
+        FROM [${tableCatalog}].INFORMATION_SCHEMA.ROUTINES R
+        WHERE R.ROUTINE_SCHEMA = '${tableSchema}' 
+        AND R.ROUTINE_CATALOG = '${tableCatalog}' 
+        AND R.ROUTINE_NAME = '${routineName} '
+        AND (R.ROUTINE_TYPE = 'PROCEDURE' OR R.ROUTINE_TYPE = 'FUNCTION') 
+        AND R.ROUTINE_BODY = 'SQL'`;
+}
+
 function getDeleteSqlScript(tableCatalog, tableSchema, tableName)
 {
     return `DELETE FROM [${tableCatalog}].[${tableSchema}].[${tableName}]
@@ -104,6 +115,7 @@ function getColTypeString (dataType, charMaxLen, numericPrecision, numericScale,
     return typeParts.join('');
 }
 
+module.exports.getRoutineInfoQuerySql = getRoutineInfoQuerySql;
 module.exports.getResultsFromQuerySql = getResultsFromQuerySql;
 module.exports.getColTypeString = getColTypeString;
 module.exports.getColumnInfoQuerySql = getColumnInfoQuerySql;
