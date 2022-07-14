@@ -2,14 +2,8 @@
 const azdata = require('azdata');
 
 function getRoutineInfoQuerySql(tableCatalog, tableSchema, routineName) {
-  return `SELECT 
-        R.ROUTINE_DEFINITION
-        FROM [${tableCatalog}].INFORMATION_SCHEMA.ROUTINES R
-        WHERE R.ROUTINE_SCHEMA = '${tableSchema}' 
-        AND R.ROUTINE_CATALOG = '${tableCatalog}' 
-        AND R.ROUTINE_NAME = '${routineName} '
-        AND (R.ROUTINE_TYPE = 'PROCEDURE' OR R.ROUTINE_TYPE = 'FUNCTION') 
-        AND R.ROUTINE_BODY = 'SQL'`;
+  return `USE [${tableCatalog}]
+        EXEC sp_helptext '${tableSchema}.${routineName}'`;
 }
 
 function getDeleteSqlScript(tableCatalog, tableSchema, tableName)

@@ -63,7 +63,7 @@ function buildFinalScript(results, tableCatalog, tableSchema, routineName) {
 
   return fullScript
     .concat(columsScriptPart)
-    .join("\n");
+    .join("");
 }
 
 module.exports.getSqlScriptAsDropAndCreateStoredProcedureAsync =
