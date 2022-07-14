@@ -3,7 +3,11 @@ const vscode = require('vscode');
 const {getSqlScriptAsInsertAsync} = require('./scriptInsertAs.js');
 const {getSqlScriptAsUpdateAsync} = require('./scriptUpdateAs.js');
 const {getSqlScriptAsSelectAsync} = require('./scriptSelectAs.js');
+const {
+  getSqlScriptAsDropAndCreateStoredProcedureAsync,
+} = require("./scriptSPAs.js");
 const sqlUtils = require('./scriptSqlUtils.js');
+const { getSqlScriptAsDropAndCreateFunctionAsync } = require('./scriptFuncAs.js');
 
 function activate(context) 
 {
@@ -188,6 +192,116 @@ function activate(context)
         }
     );
 
+    let dropAndCreateSPCommandToClipBoard = vscode.commands.registerCommand(
+      "extraSqlScriptAs.dropandCreateStoredProcedureToClipboard",
+      function (context) {
+        let databaseName = context.connectionProfile.databaseName;
+        let schemaName = context.nodeInfo.metadata.schema;
+        let routineName = context.nodeInfo.metadata.name;
+
+        getSqlScriptAsDropAndCreateStoredProcedureAsync(
+          context.connectionProfile,
+          databaseName,
+          schemaName,
+          routineName
+        )
+          .then((scriptText) => {
+            vscode.env.clipboard.writeText(scriptText).then(() => {
+              vscode.window.showInformationMessage(
+                "Script copied to clipboard."
+              );
+            });
+          })
+          .catch((reason) => {
+            vscode.window.showErrorMessage(reason);
+          });
+      }
+    );
+
+    let dropAndCreateSPCommand = vscode.commands.registerCommand(
+      "extraSqlScriptAs.dropandCreateStoredProcedure",
+      function (context) {
+        let databaseName = context.connectionProfile.databaseName;
+        let schemaName = context.nodeInfo.metadata.schema;
+        let routineName = context.nodeInfo.metadata.name;
+
+        //Test
+        getSqlScriptAsDropAndCreateStoredProcedureAsync(
+          context.connectionProfile,
+          databaseName,
+          schemaName,
+          routineName
+        )
+          .then((scriptText) => {
+            vscode.commands.executeCommand("newQuery").then(() => {
+              let editor = vscode.window.activeTextEditor;
+
+              editor.edit((edit) => {
+                edit.insert(new vscode.Position(0, 0), scriptText);
+              });
+            });
+          })
+          .catch((reason) => {
+            vscode.window.showErrorMessage(reason);
+          });
+      }
+    );
+    let dropAndCreateFuncCommandToClipBoard = vscode.commands.registerCommand(
+      "extraSqlScriptAs.dropandCreateFunctionToClipboard",
+      function (context) {
+        let databaseName = context.connectionProfile.databaseName;
+        let schemaName = context.nodeInfo.metadata.schema;
+        let routineName = context.nodeInfo.metadata.name;
+
+        getSqlScriptAsDropAndCreateFunctionAsync(
+          context.connectionProfile,
+          databaseName,
+          schemaName,
+          routineName
+        )
+          .then((scriptText) => {
+            vscode.env.clipboard.writeText(scriptText).then(() => {
+              vscode.window.showInformationMessage(
+                "Script copied to clipboard."
+              );
+            });
+          })
+          .catch((reason) => {
+            vscode.window.showErrorMessage(reason);
+          });
+      }
+    );
+
+    let dropAndCreateFuncCommand = vscode.commands.registerCommand(
+      "extraSqlScriptAs.dropandCreateFunction",
+      function (context) {
+        let databaseName = context.connectionProfile.databaseName;
+        let schemaName = context.nodeInfo.metadata.schema;
+        let routineName = context.nodeInfo.metadata.name;
+
+        //Test
+        getSqlScriptAsDropAndCreateFunctionAsync(
+          context.connectionProfile,
+          databaseName,
+          schemaName,
+          routineName
+        )
+          .then((scriptText) => {
+            vscode.commands.executeCommand("newQuery").then(() => {
+              let editor = vscode.window.activeTextEditor;
+
+              editor.edit((edit) => {
+                edit.insert(new vscode.Position(0, 0), scriptText);
+              });
+            });
+          })
+          .catch((reason) => {
+            vscode.window.showErrorMessage(reason);
+          });
+      }
+    );
+
+
     context.subscriptions.push(insertTableCommand);
     context.subscriptions.push(insertTableCommandToClipBoard);
 
@@ -199,6 +313,12 @@ function activate(context)
 
     context.subscriptions.push(selectTableCommand);
     context.subscriptions.push(selectTableCommandToClipBoard);
+
+    context.subscriptions.push(dropAndCreateSPCommand);
+    context.subscriptions.push(dropAndCreateSPCommandToClipBoard);
+
+    context.subscriptions.push(dropAndCreateFuncCommand);
+    context.subscriptions.push(dropAndCreateFuncCommandToClipBoard);
 };
 
 function deactivate() {
