@@ -13,7 +13,7 @@ const colIsIdentityOrdinal = 6;
 const colComputedOrdinal = 7;
 const colDatetimePrecisionOrdinal = 8;
 
-async function getSqlScriptAsInsertAsync(connectionProfile, tableCatalog, tableSchema, tableName) 
+async function getSqlScriptAsInsertAsync(connectionProfile, tableCatalog, tableSchema, tableName, allowIdentityOn = false) 
 {
     let queryText = sqlUtils.getColumnInfoQuerySql(tableCatalog, tableSchema, tableName);
 
@@ -23,33 +23,49 @@ async function getSqlScriptAsInsertAsync(connectionProfile, tableCatalog, tableS
         throw "No se han obtenido resultados de la consulta";
     }
 
-    let insertSqlScript = buildFinalScript(results, tableCatalog, tableSchema, tableName);
+    let insertSqlScript = buildFinalScript(results, tableCatalog, tableSchema, tableName, allowIdentityOn);
 
     return insertSqlScript;
 }
 
-function buildFinalScript(results, tableCatalog, tableSchema, tableName)
+function buildFinalScript(results, tableCatalog, tableSchema, tableName, allowIdentityOn)
 {
     let fullScript = [];
     let columsScriptPart = [];
     let valuesScriptPart = [];
 
-    fullScript.push(`INSERT INTO [${tableCatalog}].[${tableSchema}].[${tableName}]`);
-
     columsScriptPart.push("(");
     valuesScriptPart.push("(");
 
     let columnIndex = 0;
+    let anyIdentityColumn = false;
 
     for (let i= 0; i !== results.rowCount; i++) 
     {
         let rowData = results.rows[i];
 
-        let isComputed = rowData[colComputedOrdinal].displayValue;
-        let IsIdentity = rowData[colIsIdentityOrdinal].displayValue;
+        let isComputedRaw = rowData[colComputedOrdinal].displayValue;
+        let isIdentityRaw = rowData[colIsIdentityOrdinal].displayValue;
+        let dataTypeRaw = rowData[colDataTypeOrdinal].displayValue;
 
-        if(isComputed === "1" || IsIdentity === "1")
+        let isComputedColumn  = isComputedRaw === "1";
+        let isIdentityColumn  = isIdentityRaw === "1";
+        let isTimeStampColumn = dataTypeRaw == "timestamp";
+
+        if(isComputedColumn || isTimeStampColumn){
             continue;
+        }
+
+        if(isIdentityColumn)
+        {
+            if(!allowIdentityOn){
+                continue;
+            }
+
+            if(!anyIdentityColumn){
+                anyIdentityColumn = true;
+            }
+        }
 
         const separator = (columnIndex === 0) ? " " : ",";
                 
@@ -67,8 +83,20 @@ function buildFinalScript(results, tableCatalog, tableSchema, tableName)
         columnIndex += 1;
     }
 
+    const printSetIdentity = allowIdentityOn && anyIdentityColumn;
+
+    if(printSetIdentity){
+        fullScript.push(`SET IDENTITY_INSERT [${tableCatalog}].[${tableSchema}].[${tableName}] ON\n`);
+    }
+
+    fullScript.push(`INSERT INTO [${tableCatalog}].[${tableSchema}].[${tableName}]`);
+
     columsScriptPart.push(")");
     valuesScriptPart.push(")");
+
+    if(printSetIdentity){
+        valuesScriptPart.push(`\nSET IDENTITY_INSERT [${tableCatalog}].[${tableSchema}].[${tableName}] OFF\n`);
+    }
 
     return fullScript.concat(columsScriptPart).concat(["VALUES"]).concat(valuesScriptPart).join('\n');
 }

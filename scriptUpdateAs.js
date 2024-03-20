@@ -41,10 +41,15 @@ function buildFinalScript(results, tableCatalog, tableSchema, tableName)
     {
         let rowData = results.rows[i];
 
-        let isComputed = rowData[colComputedOrdinal].displayValue;
-        let IsIdentity = rowData[colIsIdentityOrdinal].displayValue;
+        let isComputedRaw = rowData[colComputedOrdinal].displayValue;
+        let isIdentityRaw = rowData[colIsIdentityOrdinal].displayValue;
+        let dataTypeRaw   = rowData[colDataTypeOrdinal].displayValue;
 
-        if(isComputed === "1" || IsIdentity === "1")
+        let isComputedColumn  = isComputedRaw === "1";
+        let isIdentityColumn  = isIdentityRaw === "1";
+        let isTimeStampColumn = dataTypeRaw == "timestamp";
+
+        if(isComputedColumn || isIdentityColumn || isTimeStampColumn)
             continue;
 
         const separator = (columnIndex === 0) ? " " : ",";

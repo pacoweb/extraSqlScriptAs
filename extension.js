@@ -56,6 +56,56 @@ function activate(context)
         }
     );
 
+    let insertTableCommandToClipBoardIdentityOn = vscode.commands.registerCommand("extraSqlScriptAs.insertTableToClipboardIdentityOn"
+    , function(context) 
+        {
+            let databaseName = context.connectionProfile.databaseName;
+            let schemaName = context.nodeInfo.metadata.schema;
+            let tableName = context.nodeInfo.metadata.name;
+
+            getSqlScriptAsInsertAsync(context.connectionProfile, databaseName, schemaName, tableName, true)
+                .then(scriptText => 
+                {
+                    vscode.env.clipboard.writeText(scriptText).then((text)=>{
+                        vscode.window.showInformationMessage('Script copied to clipboard.');
+                    });
+                })
+                .catch(reason => 
+                    {
+                        vscode.window.showErrorMessage(reason);
+                    }
+                );     
+        }
+    );
+   
+    let insertTableCommandIdentityOn = vscode.commands.registerCommand("extraSqlScriptAs.insertTableIdentityOn"
+        , function(context) 
+        {
+            let databaseName = context.connectionProfile.databaseName;
+            let schemaName = context.nodeInfo.metadata.schema;
+            let tableName = context.nodeInfo.metadata.name;
+
+            getSqlScriptAsInsertAsync(context.connectionProfile, databaseName, schemaName, tableName, true)
+                .then(scriptText => 
+                {
+                    vscode.commands.executeCommand('newQuery').then(s => {
+                        
+                        let editor = vscode.window.activeTextEditor;
+
+                        editor.edit(edit => {
+                            edit.insert(new vscode.Position(0, 0), scriptText);
+                        });
+                    });
+                })
+                .catch(reason => 
+                    {
+                        vscode.window.showErrorMessage(reason);
+                    }
+                );        
+        }
+    );
+
+
     let updateTableCommandToClipBoard = vscode.commands.registerCommand("extraSqlScriptAs.updateTableToClipboard"
     , function(context) 
         {
@@ -190,6 +240,9 @@ function activate(context)
 
     context.subscriptions.push(insertTableCommand);
     context.subscriptions.push(insertTableCommandToClipBoard);
+
+    context.subscriptions.push(insertTableCommandIdentityOn);
+    context.subscriptions.push(insertTableCommandToClipBoardIdentityOn);
 
     context.subscriptions.push(updateTableCommand);
     context.subscriptions.push(updateTableCommandToClipBoard);

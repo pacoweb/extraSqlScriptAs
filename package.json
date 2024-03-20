@@ -3,7 +3,7 @@
 	"displayName": "Extra Sql Script As",
 	"description": "This extension adds several missing options to the context menu of the object tree: Script Table as INSERT, Script Table as UPDATE...",
 	"publisher": "pacoweb",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"license": "https://raw.githubusercontent.com/pacoweb/extraSqlScriptAs/master/LICENSE",
 	"icon": "images/default_icon.png",
 	"repository": {
@@ -19,10 +19,12 @@
 	],
 	"activationEvents": [
 		"onCommand:extraSqlScriptAs.insertTable",
+		"onCommand:extraSqlScriptAs.insertTableIdentityOn",
 		"onCommand:extraSqlScriptAs.updateTable",
 		"onCommand:extraSqlScriptAs.deleteTable",
 		"onCommand:extraSqlScriptAs.selectTable",
 		"onCommand:extraSqlScriptAs.insertTableToClipboard",
+		"onCommand:extraSqlScriptAs.insertTableToClipboardIdentityOn",
 		"onCommand:extraSqlScriptAs.updateTableToClipboard",
 		"onCommand:extraSqlScriptAs.deleteTableToClipboard",
 		"onCommand:extraSqlScriptAs.selectTableToClipboard"
@@ -33,6 +35,10 @@
 			{
 				"command": "extraSqlScriptAs.insertTable",
 				"title": "Script Table as INSERT"
+			},
+			{
+				"command": "extraSqlScriptAs.insertTableIdentityOn",
+				"title": "Script Table as INSERT SET IDENTITY ON"
 			},
 			{
 				"command": "extraSqlScriptAs.updateTable",
@@ -49,6 +55,10 @@
 			{
 				"command": "extraSqlScriptAs.insertTableToClipboard",
 				"title": "Script Table as INSERT to clipboard"
+			},
+			{
+				"command": "extraSqlScriptAs.insertTableToClipboardIdentityOn",
+				"title": "Script Table as INSERT SET IDENTITY ON to clipboard"
 			},
 			{
 				"command": "extraSqlScriptAs.updateTableToClipboard",
@@ -71,6 +81,11 @@
 					"group": "1data1"
 				},
 				{
+					"command": "extraSqlScriptAs.insertTableIdentityOn",
+					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+					"group": "1data1"
+				},
+				{
 					"command": "extraSqlScriptAs.updateTable",
 					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
 					"group": "1data1"
@@ -87,6 +102,11 @@
 				},
 				{
 					"command": "extraSqlScriptAs.insertTableToClipboard",
+					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+					"group": "1data1"
+				},
+				{
+					"command": "extraSqlScriptAs.insertTableToClipboardIdentityOn",
 					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
 					"group": "1data1"
 				},
