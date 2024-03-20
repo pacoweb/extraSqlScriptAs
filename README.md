@@ -1,9 +1,11 @@
-# Azure Data Studio -   3 "Extra Sql Script As" Extension
+# Azure Data Studio -   5 "Extra Sql Script As" Extension
 
 This extension adds several missing options to the context menu of the object tree:
 
 * Script Table as INSERT
 * Script Table as INSERT to clipboard
+* Script Table as INSERT SET IDENTITY ON
+* Script Table as INSERT SET IDENTITY ON to clipboard
 * Script Table as UPDATE
 * Script Table as UPDATE to clipboard
 * Script Table as DELETE
@@ -31,6 +33,10 @@ Can be raised here: https://github.com/pacoweb/extraSqlScriptAs/issues
 
 ## Release Notes
 
+### 0.6.0
+
+- Added Script Table as INSERT with SET IDENTITY ON
+
 ### 0.5.0
 
 - Added Script Table as SELECT
@@ -38,3 +44,7 @@ Can be raised here: https://github.com/pacoweb/extraSqlScriptAs/issues
 ### 0.1.0
 
 - Initial release.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=pacoweb/extraSqlScriptAs&type=Date)](https://star-history.com/#pacoweb/extraSqlScriptAs&Date)
