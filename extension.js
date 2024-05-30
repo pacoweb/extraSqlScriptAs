@@ -1,262 +1,79 @@
 const vscode = require('vscode');
-
 const {getSqlScriptAsInsertAsync} = require('./scriptInsertAs.js');
 const {getSqlScriptAsUpdateAsync} = require('./scriptUpdateAs.js');
 const {getSqlScriptAsSelectAsync} = require('./scriptSelectAs.js');
 const sqlUtils = require('./scriptSqlUtils.js');
 
-function activate(context) 
+const databaseNotFoundMessage = 'Database name not found.';
+
+function tryGetBestDatabaseName(context) 
 {
-    let insertTableCommandToClipBoard = vscode.commands.registerCommand("extraSqlScriptAs.insertTableToClipboard"
-    , function(context) 
-        {
-            let databaseName = context.connectionProfile.databaseName;
-            let schemaName = context.nodeInfo.metadata.schema;
-            let tableName = context.nodeInfo.metadata.name;
+    let databaseName = context.connectionProfile.databaseName;
+    
+    if (databaseName) 
+        return databaseName;
 
-            getSqlScriptAsInsertAsync(context.connectionProfile, databaseName, schemaName, tableName)
-                .then(scriptText => 
-                {
-                    vscode.env.clipboard.writeText(scriptText).then((text)=>{
-                        vscode.window.showInformationMessage('Script copied to clipboard.');
-                    });
-                })
-                .catch(reason => 
-                    {
-                        vscode.window.showErrorMessage(reason);
-                    }
-                );     
+    //In Macos, in some cases, the database name is not available in the connection profile.
+    //In this case, we try to get the database name from metadata.urn
+    const metadataUrn = context.nodeInfo.metadata.urn;
+
+    if (metadataUrn) {
+        const regex = /\/Database\[@Name='([^']*)'\]/;
+        const match = metadataUrn.match(regex);
+        if (match) return match[1];
+    }
+
+    return null;
+}
+
+async function handleCommand(context, getScriptFunc, clipboard = false, identityOn = false) {
+    let databaseName = tryGetBestDatabaseName(context);
+    if (!databaseName) {
+        vscode.window.showErrorMessage(databaseNotFoundMessage);
+        return;
+    }
+
+    let schemaName = context.nodeInfo.metadata.schema;
+    let tableName = context.nodeInfo.metadata.name;
+
+    try {
+        let scriptText = await getScriptFunc(context.connectionProfile, databaseName, schemaName, tableName, identityOn);
+        if (clipboard) {
+            await vscode.env.clipboard.writeText(scriptText);
+            vscode.window.showInformationMessage('Script copied to clipboard.');
+        } else {
+            await vscode.commands.executeCommand('newQuery');
+            let editor = vscode.window.activeTextEditor;
+            editor.edit(edit => {
+                edit.insert(new vscode.Position(0, 0), scriptText);
+            });
         }
-    );
-   
-    let insertTableCommand = vscode.commands.registerCommand("extraSqlScriptAs.insertTable"
-        , function(context) 
-        {
-            let databaseName = context.connectionProfile.databaseName;
-            let schemaName = context.nodeInfo.metadata.schema;
-            let tableName = context.nodeInfo.metadata.name;
+    } catch (reason) {
+        vscode.window.showErrorMessage(reason);
+    }
+}
 
-            getSqlScriptAsInsertAsync(context.connectionProfile, databaseName, schemaName, tableName)
-                .then(scriptText => 
-                {
-                    vscode.commands.executeCommand('newQuery').then(s => {
-                        
-                        let editor = vscode.window.activeTextEditor;
+function activate(context) {
+    const commands = [
+        { name: "extraSqlScriptAs.insertTableToClipboard", func: getSqlScriptAsInsertAsync, clipboard: true },
+        { name: "extraSqlScriptAs.insertTable", func: getSqlScriptAsInsertAsync },
+        { name: "extraSqlScriptAs.insertTableToClipboardIdentityOn", func: getSqlScriptAsInsertAsync, clipboard: true, identityOn: true },
+        { name: "extraSqlScriptAs.insertTableIdentityOn", func: getSqlScriptAsInsertAsync, identityOn: true },
+        { name: "extraSqlScriptAs.updateTableToClipboard", func: getSqlScriptAsUpdateAsync, clipboard: true },
+        { name: "extraSqlScriptAs.updateTable", func: getSqlScriptAsUpdateAsync },
+        { name: "extraSqlScriptAs.deleteTableToClipboard", func: (profile, db, schema, table) => Promise.resolve(sqlUtils.getDeleteSqlScript(db, schema, table)), clipboard: true },
+        { name: "extraSqlScriptAs.deleteTable", func: (profile, db, schema, table) => Promise.resolve(sqlUtils.getDeleteSqlScript(db, schema, table)) },
+        { name: "extraSqlScriptAs.selectTableToClipboard", func: getSqlScriptAsSelectAsync, clipboard: true },
+        { name: "extraSqlScriptAs.selectTable", func: getSqlScriptAsSelectAsync },
+    ];
 
-                        editor.edit(edit => {
-                            edit.insert(new vscode.Position(0, 0), scriptText);
-                        });
-                    });
-                })
-                .catch(reason => 
-                    {
-                        vscode.window.showErrorMessage(reason);
-                    }
-                );        
-        }
-    );
+    for (const { name, func, clipboard, identityOn } of commands) {
+        let command = vscode.commands.registerCommand(name, context => handleCommand(context, func, clipboard, identityOn));
+        context.subscriptions.push(command);
+    }
+}
 
-    let insertTableCommandToClipBoardIdentityOn = vscode.commands.registerCommand("extraSqlScriptAs.insertTableToClipboardIdentityOn"
-    , function(context) 
-        {
-            let databaseName = context.connectionProfile.databaseName;
-            let schemaName = context.nodeInfo.metadata.schema;
-            let tableName = context.nodeInfo.metadata.name;
-
-            getSqlScriptAsInsertAsync(context.connectionProfile, databaseName, schemaName, tableName, true)
-                .then(scriptText => 
-                {
-                    vscode.env.clipboard.writeText(scriptText).then((text)=>{
-                        vscode.window.showInformationMessage('Script copied to clipboard.');
-                    });
-                })
-                .catch(reason => 
-                    {
-                        vscode.window.showErrorMessage(reason);
-                    }
-                );     
-        }
-    );
-   
-    let insertTableCommandIdentityOn = vscode.commands.registerCommand("extraSqlScriptAs.insertTableIdentityOn"
-        , function(context) 
-        {
-            let databaseName = context.connectionProfile.databaseName;
-            let schemaName = context.nodeInfo.metadata.schema;
-            let tableName = context.nodeInfo.metadata.name;
-
-            getSqlScriptAsInsertAsync(context.connectionProfile, databaseName, schemaName, tableName, true)
-                .then(scriptText => 
-                {
-                    vscode.commands.executeCommand('newQuery').then(s => {
-                        
-                        let editor = vscode.window.activeTextEditor;
-
-                        editor.edit(edit => {
-                            edit.insert(new vscode.Position(0, 0), scriptText);
-                        });
-                    });
-                })
-                .catch(reason => 
-                    {
-                        vscode.window.showErrorMessage(reason);
-                    }
-                );        
-        }
-    );
-
-
-    let updateTableCommandToClipBoard = vscode.commands.registerCommand("extraSqlScriptAs.updateTableToClipboard"
-    , function(context) 
-        {
-            let databaseName = context.connectionProfile.databaseName;
-            let schemaName = context.nodeInfo.metadata.schema;
-            let tableName = context.nodeInfo.metadata.name;
-
-            getSqlScriptAsUpdateAsync(context.connectionProfile, databaseName, schemaName, tableName)
-                .then(scriptText => 
-                {
-                    vscode.env.clipboard.writeText(scriptText).then((text)=>{
-                        vscode.window.showInformationMessage('Script copied to clipboard.');
-                    });
-                })
-                .catch(reason => 
-                        {
-                            vscode.window.showErrorMessage(reason);
-                        }
-                );      
-        }
-    );
-   
-    let updateTableCommand = vscode.commands.registerCommand("extraSqlScriptAs.updateTable"
-        , function(context) 
-        {
-            let databaseName = context.connectionProfile.databaseName;
-            let schemaName = context.nodeInfo.metadata.schema;
-            let tableName = context.nodeInfo.metadata.name;
-            
-            //Test
-            getSqlScriptAsUpdateAsync(context.connectionProfile, databaseName, schemaName, tableName)
-                .then(scriptText => 
-                {
-                    vscode.commands.executeCommand('newQuery').then(s => {
-                        
-                        let editor = vscode.window.activeTextEditor;
-
-                        editor.edit(edit => {
-                            edit.insert(new vscode.Position(0, 0), scriptText);
-                        });
-                    });
-                })
-                .catch(reason => 
-                    {
-                        vscode.window.showErrorMessage(reason);
-                    }
-            );      
-        }
-    );
-
-    let deleteTableCommandToClipBoard = vscode.commands.registerCommand("extraSqlScriptAs.deleteTableToClipboard"
-    , function(context) 
-        {
-            let databaseName = context.connectionProfile.databaseName;
-            let schemaName = context.nodeInfo.metadata.schema;
-            let tableName = context.nodeInfo.metadata.name;
-
-            vscode.env.clipboard.writeText(sqlUtils.getDeleteSqlScript(databaseName, schemaName, tableName)).then((text)=>{
-                vscode.window.showInformationMessage('Script copied to clipboard.');
-            });     
-        }
-    );
-   
-    let deleteTableCommand = vscode.commands.registerCommand("extraSqlScriptAs.deleteTable"
-        , function(context) 
-        {
-            let databaseName = context.connectionProfile.databaseName;
-            let schemaName = context.nodeInfo.metadata.schema;
-            let tableName = context.nodeInfo.metadata.name;
-
-            vscode.commands.executeCommand('newQuery').then(s => {
-                
-                let editor = vscode.window.activeTextEditor;
-
-                editor.edit(edit => {
-                    edit.insert(new vscode.Position(0, 0)
-                    , sqlUtils.getDeleteSqlScript(databaseName, schemaName, tableName))
-                });
-            });      
-        }
-    );
-
-    let selectTableCommandToClipBoard = vscode.commands.registerCommand("extraSqlScriptAs.selectTableToClipboard"
-    , function(context) 
-        {
-            let databaseName = context.connectionProfile.databaseName;
-            let schemaName = context.nodeInfo.metadata.schema;
-            let tableName = context.nodeInfo.metadata.name;
-
-            getSqlScriptAsSelectAsync(context.connectionProfile, databaseName, schemaName, tableName)
-                .then(scriptText => 
-                {
-                    vscode.env.clipboard.writeText(scriptText).then((text)=>{
-                        vscode.window.showInformationMessage('Script copied to clipboard.');
-                    });
-                })
-                .catch(reason => 
-                        {
-                            vscode.window.showErrorMessage(reason);
-                        }
-                );      
-        }
-    );
-   
-    let selectTableCommand = vscode.commands.registerCommand("extraSqlScriptAs.selectTable"
-        , function(context) 
-        {
-            let databaseName = context.connectionProfile.databaseName;
-            let schemaName = context.nodeInfo.metadata.schema;
-            let tableName = context.nodeInfo.metadata.name;
-            
-            //Test
-            getSqlScriptAsSelectAsync(context.connectionProfile, databaseName, schemaName, tableName)
-                .then(scriptText => 
-                {
-                    vscode.commands.executeCommand('newQuery').then(s => {
-                        
-                        let editor = vscode.window.activeTextEditor;
-
-                        editor.edit(edit => {
-                            edit.insert(new vscode.Position(0, 0), scriptText);
-                        });
-                    });
-                })
-                .catch(reason => 
-                    {
-                        vscode.window.showErrorMessage(reason);
-                    }
-            );      
-        }
-    );
-
-    context.subscriptions.push(insertTableCommand);
-    context.subscriptions.push(insertTableCommandToClipBoard);
-
-    context.subscriptions.push(insertTableCommandIdentityOn);
-    context.subscriptions.push(insertTableCommandToClipBoardIdentityOn);
-
-    context.subscriptions.push(updateTableCommand);
-    context.subscriptions.push(updateTableCommandToClipBoard);
-
-    context.subscriptions.push(deleteTableCommand);
-    context.subscriptions.push(deleteTableCommandToClipBoard);
-
-    context.subscriptions.push(selectTableCommand);
-    context.subscriptions.push(selectTableCommandToClipBoard);
-};
-
-function deactivate() {
-
-};
+function deactivate() {}
 
 exports.activate = activate;
 exports.deactivate = deactivate;
