@@ -49,7 +49,7 @@ async function handleCommand(context, getScriptFunc, clipboard = false, identity
             });
         }
     } catch (reason) {
-        vscode.window.showErrorMessage(reason);
+        vscode.window.showErrorMessage(reason.message);
     }
 }
 
