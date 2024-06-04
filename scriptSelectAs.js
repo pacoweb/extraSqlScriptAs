@@ -8,7 +8,7 @@ async function getSqlScriptAsSelectAsync(connectionProfile, tableCatalog, tableS
 {
     let queryText = sqlUtils.getColumnInfoQuerySql(tableCatalog, tableSchema, tableName);
 
-    let results = await sqlUtils.getResultsFromQuerySql(connectionProfile, "MSSQL", queryText);
+    let results = await sqlUtils.getResultsFromQuerySql(connectionProfile, "MSSQL", queryText, tableCatalog);
 
     if (!results || results.rowCount === 0) {
         throw "No se han obtenido resultados de la consulta";

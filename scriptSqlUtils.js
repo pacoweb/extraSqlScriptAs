@@ -44,8 +44,14 @@ function getColumnInfoQuerySql(tableCatalog, tableSchema, tableName)
         ORDER BY COL.ORDINAL_POSITION`;
 }
 
-async function getResultsFromQuerySql(connectionProfile, providerText, queryText) 
+async function getResultsFromQuerySql(connectionProfile, providerText, queryText, tableCatalog) 
 {
+    //FIX AZURE DATA PROVIDER, WHEN DEFAULT DATABASE IS NOT SET USE ALWAYS MASTER IN CONNECTION PROFILE OPTIONS
+    if(tableCatalog 
+        && connectionProfile.options.database != tableCatalog){
+            connectionProfile.options.database = tableCatalog;
+    }
+    
     let connectionResult = await azdata.connection.connect(connectionProfile, false, false);
     let connectionUri = await azdata.connection.getUriForConnection(connectionResult.connectionId);
 
