@@ -1,10 +1,27 @@
 
 const azdata = require('azdata');
 
-function getDeleteSqlScript(tableCatalog, tableSchema, tableName)
-{
-    return `DELETE FROM [${tableCatalog}].[${tableSchema}].[${tableName}]
-    WHERE <Search Conditions,,>`;
+function getColumnInfoQueryMySql(tableCatalog, tableSchema, tableName) {
+    return `SELECT
+        C.COLUMN_NAME,
+        C.DATA_TYPE,
+        C.CHARACTER_MAXIMUM_LENGTH,
+        C.NUMERIC_PRECISION,
+        C.NUMERIC_SCALE,
+        C.IS_NULLABLE,
+        (CASE WHEN EXTRA LIKE '%auto_increment%' THEN 'YES' ELSE 'NO' END) AS IS_IDENTITY,
+        (CASE WHEN EXTRA LIKE '%VIRTUAL GENERATED%' OR EXTRA LIKE '%STORED GENERATED%' THEN 'YES' ELSE 'NO' END) AS IS_COMPUTED,
+        C.DATETIME_PRECISION
+    FROM
+        INFORMATION_SCHEMA.TABLES AS T
+    INNER JOIN
+        INFORMATION_SCHEMA.COLUMNS AS C ON C.TABLE_NAME = T.TABLE_NAME AND C.TABLE_SCHEMA = T.TABLE_SCHEMA
+    WHERE
+        T.TABLE_TYPE = 'BASE TABLE'
+        AND T.TABLE_SCHEMA = '${tableSchema}' -- Ensure this is the correct catalog name
+        AND T.TABLE_NAME = '${tableName}'
+    ORDER BY
+    C.ORDINAL_POSITION;`;
 }
 
 function getColumnInfoQuerySql(tableCatalog, tableSchema, tableName)
@@ -111,6 +128,6 @@ function getColTypeString (dataType, charMaxLen, numericPrecision, numericScale,
 }
 
 module.exports.getResultsFromQuerySql = getResultsFromQuerySql;
+module.exports.getColumnInfoQueryMySql = getColumnInfoQueryMySql;
 module.exports.getColTypeString = getColTypeString;
 module.exports.getColumnInfoQuerySql = getColumnInfoQuerySql;
-module.exports.getDeleteSqlScript = getDeleteSqlScript;
