@@ -33,6 +33,10 @@ Can be raised here: https://github.com/pacoweb/extraSqlScriptAs/issues
 
 ## Release Notes
 
+### 0.7.0
+
+- Added support for MySQL provider [@olegrumiancev](https://github.com/olegrumiancev)
+
 ### 0.6.0
 
 - Added Script Table as INSERT with SET IDENTITY ON
