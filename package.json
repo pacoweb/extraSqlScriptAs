@@ -1,9 +1,9 @@
 {
 	"name": "extra-sql-script-as",
-	"displayName": "Extra Sql Script As",
+	"displayName": "Extra Sql Script As (MSSQL + MySQL)",
 	"description": "This extension adds several missing options to the context menu of the object tree: Script Table as INSERT, Script Table as UPDATE...",
 	"publisher": "pacoweb",
-	"version": "0.6.3",
+	"version": "0.7.0",
 	"license": "https://raw.githubusercontent.com/pacoweb/extraSqlScriptAs/master/LICENSE",
 	"icon": "images/default_icon.png",
 	"repository": {
@@ -83,14 +83,14 @@
 		"menus": {
 			"objectExplorer/item/context": [
 				{
-					"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+					"when": "(connectionProvider == MSSQL || connectionProvider == MySQL) && nodeType && nodeType == Table",
 					"group":"extraSqlScriptAs",
 					"submenu":"extraSqlScriptAs.submenu"
 				}],
 				"extraSqlScriptAs.submenu":[
 					{
 						"command": "extraSqlScriptAs.insertTable",
-						"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+						"when": "(connectionProvider == MSSQL || connectionProvider == MySQL) && nodeType && nodeType == Table",
 						"group":"extraSqlScriptAs"
 					},
 					{
@@ -100,22 +100,22 @@
 					},
 					{
 						"command": "extraSqlScriptAs.updateTable",
-						"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+						"when": "(connectionProvider == MSSQL || connectionProvider == MySQL) && nodeType && nodeType == Table",
 						"group":"extraSqlScriptAs"
 					},
 					{
 						"command": "extraSqlScriptAs.deleteTable",
-						"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+						"when": "(connectionProvider == MSSQL || connectionProvider == MySQL) && nodeType && nodeType == Table",
 						"group":"extraSqlScriptAs"
 					},
 					{
 						"command": "extraSqlScriptAs.selectTable",
-						"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+						"when": "(connectionProvider == MSSQL || connectionProvider == MySQL) && nodeType && nodeType == Table",
 						"group":"extraSqlScriptAs"
 					},
 					{
 						"command": "extraSqlScriptAs.insertTableToClipboard",
-						"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+						"when": "(connectionProvider == MSSQL || connectionProvider == MySQL) && nodeType && nodeType == Table",
 						"group":"extraSqlScriptAs"
 					},
 					{
@@ -125,17 +125,17 @@
 					},
 					{
 						"command": "extraSqlScriptAs.updateTableToClipboard",
-						"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+						"when": "(connectionProvider == MSSQL || connectionProvider == MySQL) && nodeType && nodeType == Table",
 						"group":"extraSqlScriptAs"
 					},
 					{
 						"command": "extraSqlScriptAs.deleteTableToClipboard",
-						"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+						"when": "(connectionProvider == MSSQL || connectionProvider == MySQL) && nodeType && nodeType == Table",
 						"group":"extraSqlScriptAs"
 					},
 					{
 						"command": "extraSqlScriptAs.selectTableToClipboard",
-						"when": "connectionProvider == MSSQL && nodeType && nodeType == Table",
+						"when": "(connectionProvider == MSSQL || connectionProvider == MySQL) && nodeType && nodeType == Table",
 						"group":"extraSqlScriptAs"
 					}
 				]

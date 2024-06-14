@@ -2,6 +2,7 @@ const vscode = require('vscode');
 const {getSqlScriptAsInsertAsync} = require('./scriptInsertAs.js');
 const {getSqlScriptAsUpdateAsync} = require('./scriptUpdateAs.js');
 const {getSqlScriptAsSelectAsync} = require('./scriptSelectAs.js');
+const {getDeleteSqlScript} = require('./scriptDeleteAs.js');
 const sqlUtils = require('./scriptSqlUtils.js');
 
 const databaseNotFoundMessage = 'Database name not found.';
@@ -61,8 +62,8 @@ function activate(context) {
         { name: "extraSqlScriptAs.insertTableIdentityOn", func: getSqlScriptAsInsertAsync, identityOn: true },
         { name: "extraSqlScriptAs.updateTableToClipboard", func: getSqlScriptAsUpdateAsync, clipboard: true },
         { name: "extraSqlScriptAs.updateTable", func: getSqlScriptAsUpdateAsync },
-        { name: "extraSqlScriptAs.deleteTableToClipboard", func: (profile, db, schema, table) => Promise.resolve(sqlUtils.getDeleteSqlScript(db, schema, table)), clipboard: true },
-        { name: "extraSqlScriptAs.deleteTable", func: (profile, db, schema, table) => Promise.resolve(sqlUtils.getDeleteSqlScript(db, schema, table)) },
+        { name: "extraSqlScriptAs.deleteTableToClipboard", func: (profile, db, schema, table) => Promise.resolve(getDeleteSqlScript(profile, db, schema, table)), clipboard: true },
+        { name: "extraSqlScriptAs.deleteTable", func: (profile, db, schema, table) => Promise.resolve(getDeleteSqlScript(profile, db, schema, table)) },
         { name: "extraSqlScriptAs.selectTableToClipboard", func: getSqlScriptAsSelectAsync, clipboard: true },
         { name: "extraSqlScriptAs.selectTable", func: getSqlScriptAsSelectAsync },
     ];
