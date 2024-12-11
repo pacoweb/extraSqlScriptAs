@@ -3,7 +3,11 @@ const {getSqlScriptAsInsertAsync} = require('./scriptInsertAs.js');
 const {getSqlScriptAsUpdateAsync} = require('./scriptUpdateAs.js');
 const {getSqlScriptAsSelectAsync} = require('./scriptSelectAs.js');
 const {getDeleteSqlScript} = require('./scriptDeleteAs.js');
+const {
+  getSqlScriptAsDropAndCreateStoredProcedureAsync,
+} = require("./scriptSPAs.js");
 const sqlUtils = require('./scriptSqlUtils.js');
+const { getSqlScriptAsDropAndCreateFunctionAsync } = require('./scriptFuncAs.js');
 
 const databaseNotFoundMessage = 'Database name not found.';
 
@@ -55,6 +59,7 @@ async function handleCommand(context, getScriptFunc, clipboard = false, identity
 }
 
 function activate(context) {
+
     const commands = [
         { name: "extraSqlScriptAs.insertTableToClipboard", func: getSqlScriptAsInsertAsync, clipboard: true },
         { name: "extraSqlScriptAs.insertTable", func: getSqlScriptAsInsertAsync },
@@ -66,6 +71,10 @@ function activate(context) {
         { name: "extraSqlScriptAs.deleteTable", func: (profile, db, schema, table) => Promise.resolve(getDeleteSqlScript(profile, db, schema, table)) },
         { name: "extraSqlScriptAs.selectTableToClipboard", func: getSqlScriptAsSelectAsync, clipboard: true },
         { name: "extraSqlScriptAs.selectTable", func: getSqlScriptAsSelectAsync },
+        { name: "extraSqlScriptAs.dropAndCreateStoredProcedureToClipboard", func: getSqlScriptAsDropAndCreateStoredProcedureAsync, clipboard: true },
+        { name: "extraSqlScriptAs.dropAndCreateStoredProcedure", func: getSqlScriptAsDropAndCreateStoredProcedureAsync },
+        { name: "extraSqlScriptAs.dropAndCreateFunctionToClipboard", func: getSqlScriptAsDropAndCreateFunctionAsync, clipboard: true },
+        { name: "extraSqlScriptAs.dropAndCreateFunction", func: getSqlScriptAsDropAndCreateFunctionAsync },
     ];
 
     for (const { name, func, clipboard, identityOn } of commands) {
