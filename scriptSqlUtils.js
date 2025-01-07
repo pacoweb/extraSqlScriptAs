@@ -127,7 +127,42 @@ function getColTypeString (dataType, charMaxLen, numericPrecision, numericScale,
     return typeParts.join('');
 }
 
+function getRoutineInfoQuerySql(tableCatalog, tableSchema, routineName) {
+  return `USE [${tableCatalog}]
+        EXEC sp_helptext '${tableSchema}.${routineName}'`;
+}
+
+function getRoutineInfoQueryMySql(tableCatalog, tableSchema, routineName) {
+    return `SELECT 
+        ROUTINE_DEFINITION,
+        ROUTINE_TYPE,
+        DTD_IDENTIFIER,
+        DEFINER,
+        IS_DETERMINISTIC,
+        SQL_DATA_ACCESS,
+        SECURITY_TYPE,
+        PARAMETER_STYLE
+    FROM INFORMATION_SCHEMA.ROUTINES 
+    WHERE ROUTINE_SCHEMA = '${tableSchema}'
+    AND ROUTINE_NAME = '${routineName}';`;
+  }
+
+function getRoutineParamsQueryMySql(tableCatalog, tableSchema, routineName) {
+    return `SELECT 
+        PARAMETER_MODE as MODE,
+        PARAMETER_NAME,
+        DATA_TYPE,
+        CHARACTER_MAXIMUM_LENGTH
+    FROM INFORMATION_SCHEMA.PARAMETERS
+    WHERE SPECIFIC_SCHEMA = '${tableSchema}'
+    AND SPECIFIC_NAME = '${routineName}';
+    ORDER BY ORDINAL_POSITION;`;
+  }
+
 module.exports.getResultsFromQuerySql = getResultsFromQuerySql;
 module.exports.getColumnInfoQueryMySql = getColumnInfoQueryMySql;
 module.exports.getColTypeString = getColTypeString;
 module.exports.getColumnInfoQuerySql = getColumnInfoQuerySql;
+module.exports.getRoutineInfoQuerySql = getRoutineInfoQuerySql;
+module.exports.getRoutineInfoQueryMySql = getRoutineInfoQueryMySql;
+module.exports.getRoutineParamsQueryMySql = getRoutineParamsQueryMySql;
