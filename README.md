@@ -1,3 +1,6 @@
+# Due to the retirement of Azure Data Studio, the repository is marked read-only!!!
+https://devblogs.microsoft.com/azure-sql/azure-data-studio-retirement/
+
 # Azure Data Studio -   5 "Extra Sql Script As" Extension
 
 This extension adds several missing options to the context menu of the object tree:
