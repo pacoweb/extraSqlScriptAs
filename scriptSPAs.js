@@ -3,6 +3,8 @@
 const sqlUtils = require('./scriptSqlUtils.js');
 
 const colNameOrdinal = 0;
+const defaultNoQueryText = "[FAILED TO RESOLVE QUERY TEXT]";
+const defaultNoParamText = "[FAILED TO RESOLVE PARAM TEXT]";
 
 async function getSqlScriptAsDropAndCreateStoredProcedureAsync(
   connectionProfile,
@@ -11,28 +13,35 @@ async function getSqlScriptAsDropAndCreateStoredProcedureAsync(
   routineName
 ) {
   let provider = connectionProfile.providerName;
-  let queryText = "[FAILED TO RESOLVE QUERY TEXT]";
-  let paramText = "[FAILED TO RESOLVE PARAM TEXT]";
-  if (provider === "MSSQL") {
+  let queryText = defaultNoQueryText;
+  let paramText = defaultNoParamText;
+
+  if (provider === "MSSQL") 
+  {
     queryText = sqlUtils.getRoutineInfoQuerySql(tableCatalog, tableSchema, routineName);
   }
-  else if (provider === "MySQL") {
+  else if (provider === "MySQL") 
+  {
     queryText = sqlUtils.getRoutineInfoQueryMySql(tableCatalog, tableSchema, routineName);
     paramText = sqlUtils.getRoutineParamsQueryMySql(tableCatalog, tableSchema, routineName);
   }
 
   let results = await sqlUtils.getResultsFromQuerySql(connectionProfile, provider, queryText);
-  let paramResults = await sqlUtils.getResultsFromQuerySql(connectionProfile, provider, paramText);
-
+  
   if (!results || results.rowCount === 0) {
     throw "No query results returned";
   }
 
   let updateSqlScript = "...";
-  if (provider === "MSSQL") {
+
+  if (provider === "MSSQL") 
+  {
     updateSqlScript = buildFinalScriptMSSQL(results, tableCatalog, tableSchema, routineName);
   }
-  else if (provider === "MySQL") {
+  else if (provider === "MySQL") 
+  {
+    const paramResults = await sqlUtils.getResultsFromQuerySql(connectionProfile, provider, paramText);
+
     updateSqlScript = buildFinalScriptMySQL(results, paramResults, tableCatalog, tableSchema, routineName);
   }
 
@@ -64,28 +73,45 @@ function buildFinalScriptMSSQL(results, tableCatalog, tableSchema, routineName) 
 }
 
 function buildFinalScriptMySQL(results, paramResults, tableCatalog, tableSchema, routineName) {
-  let fullScript = [];
-  let columsScriptPart = [];
+  const fullScript = [];
+  const columsScriptPart = [];
+
+  const firstRow = results.rows[0];
+  const definerRaw = firstRow[3].rawObject;
+  const dataAccessRaw = firstRow[5].rawObject;
+  const commentRaw = firstRow[8].rawObject;
 
   fullScript.push(`DROP PROCEDURE IF EXISTS \`${routineName}\`;\n\n`);
-  fullScript.push(`CREATE DEFINER=\`${results.rows[0][3].rawObject}\` PROCEDURE \`${routineName}\`(`);
-  if (paramResults.rowCount === 0) {
-    fullScript.push(`)`);
+  fullScript.push(`CREATE DEFINER=\`${definerRaw}\` PROCEDURE \`${routineName}\`(`);
+
+  for (let i = 0; i !== paramResults.rowCount; i++) 
+  {
+    const rowData = paramResults.rows[i];
+    const charMaxLenRaw = rowData[3].rawObject;
+    const charMaxLenPart = charMaxLenRaw == null || charMaxLenRaw.toLowerCase() == "null" ? "" : `(${charMaxLenRaw})`;
+
+    const isFirstRow = i === 0;
+    const isLastRow  = i === paramResults.rowCount - 1;
+    const comma = isLastRow ? "" : ",";
+
+    if(isFirstRow){
+      columsScriptPart.push(`\n`);
+    }
+
+    columsScriptPart.push(
+      `  ${rowData[0].rawObject} ${rowData[1].rawObject} ${rowData[2].rawObject}${charMaxLenPart}${comma} \n`
+    );
+
   }
 
-  for (let i = 0; i !== paramResults.rowCount; i++) {
-    fullScript.push(`\n`);
-    let rowData = paramResults.rows[i];
+  fullScript.push(`)`);
 
-    if (i === paramResults.rowCount - 1) {
-      columsScriptPart.push(
-        `  ${rowData[0].rawObject} ${rowData[1].rawObject} ${rowData[2].rawObject}(${rowData[3].rawObject})\n)\n\n`
-      );
-    } else {
-      columsScriptPart.push(
-        `  ${rowData[0].rawObject} ${rowData[1].rawObject} ${rowData[2].rawObject}(${rowData[3].rawObject}), \n`
-      );
-    }
+  if(dataAccessRaw){
+    fullScript.push(`\n${dataAccessRaw}\n`);
+  }
+
+  if(commentRaw){
+    fullScript.push(`\nCOMMENT '${commentRaw}'\n`);
   }
 
   for (let i = 0; i !== results.rowCount; i++) {

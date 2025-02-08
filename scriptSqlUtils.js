@@ -141,7 +141,8 @@ function getRoutineInfoQueryMySql(tableCatalog, tableSchema, routineName) {
         IS_DETERMINISTIC,
         SQL_DATA_ACCESS,
         SECURITY_TYPE,
-        PARAMETER_STYLE
+        PARAMETER_STYLE,
+        CONVERT(ROUTINE_COMMENT USING utf8) AS ROUTINE_COMMENT_TEXT
     FROM INFORMATION_SCHEMA.ROUTINES 
     WHERE ROUTINE_SCHEMA = '${tableSchema}'
     AND ROUTINE_NAME = '${routineName}';`;

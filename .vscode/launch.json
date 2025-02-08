@@ -18,7 +18,8 @@
             "runtimeExecutable": "azuredatastudio",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}"
-            ]
+            ],
+            "timeout": 25000
         },
         {
             "name": "Extension Tests",
