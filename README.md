@@ -1,5 +1,6 @@
 # Due to the retirement of Azure Data Studio, the repository is marked read-only!!!
 https://devblogs.microsoft.com/azure-sql/azure-data-studio-retirement/
+## Thank you all
 
 # Azure Data Studio -   5 "Extra Sql Script As" Extension
 
